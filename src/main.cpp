@@ -4,23 +4,20 @@ FASTLED_USING_NAMESPACE
 
 #define NUM_LEDS_PER_STRIP 72
 
-#define NUM_LEDS 144
-#define NUM_LEDS_1  72
-#define NUM_LEDS_2  72
-// #define NUM_LEDS_3  10
+#define NUM_LEDS NUM_LEDS_PER_STRIP*8
 
 CRGBArray<NUM_LEDS> leds;
 
-CRGBSet leds_1(leds, 0,                                                                    NUM_LEDS_1);
-CRGBSet leds_2(leds, NUM_LEDS_1,                                                           NUM_LEDS_2);
-// CRGBSet leds_3(leds, NUM_LEDS_1+NUM_LEDS_2,                                                NUM_LEDS_3);
+CRGBSet leds_1(leds, 0,                                                                    NUM_LEDS_PER_STRIP);
+CRGBSet leds_2(leds, NUM_LEDS_PER_STRIP,                                                   NUM_LEDS_PER_STRIP);
+CRGBSet leds_3(leds, NUM_LEDS_PER_STRIP*2,                                                 NUM_LEDS_PER_STRIP);
+CRGBSet leds_4(leds, NUM_LEDS_PER_STRIP*3,                                                 NUM_LEDS_PER_STRIP);
+CRGBSet leds_5(leds, NUM_LEDS_PER_STRIP*4,                                                 NUM_LEDS_PER_STRIP);
+CRGBSet leds_6(leds, NUM_LEDS_PER_STRIP*5,                                                 NUM_LEDS_PER_STRIP);
+CRGBSet leds_7(leds, NUM_LEDS_PER_STRIP*6,                                                 NUM_LEDS_PER_STRIP);
+CRGBSet leds_8(leds, NUM_LEDS_PER_STRIP*7,                                                 NUM_LEDS_PER_STRIP);
 
-
-
-CRGBSet leds_2r(leds_2(71,0));  // Reverse order of leftSide strip.
-
-
-#define BRIGHTNESS          1
+#define BRIGHTNESS          3
 #define FRAMES_PER_SECOND  120
 
 
@@ -63,8 +60,14 @@ uint8_t gHue = 0; // rotating "base color" used by many of the patterns
 void loop()
 {
 
-  my_fill_rainbow( leds_1, NUM_LEDS_1, gHue, 4);
-  my_fill_rainbow( leds_2, NUM_LEDS_2, gHue, 4,1);
+  my_fill_rainbow( leds_1, NUM_LEDS_PER_STRIP, gHue, 4);
+  my_fill_rainbow( leds_2, NUM_LEDS_PER_STRIP, gHue, 4,1);
+  my_fill_rainbow( leds_3, NUM_LEDS_PER_STRIP, gHue, 4);
+  my_fill_rainbow( leds_4, NUM_LEDS_PER_STRIP, gHue, 4,1);
+  my_fill_rainbow( leds_5, NUM_LEDS_PER_STRIP, gHue, 4);
+  my_fill_rainbow( leds_6, NUM_LEDS_PER_STRIP, gHue, 4,1);
+  my_fill_rainbow( leds_7, NUM_LEDS_PER_STRIP, gHue, 4);
+  my_fill_rainbow( leds_8, NUM_LEDS_PER_STRIP, gHue, 4,1);
 
   // send the 'leds' array out to the actual LED strip
   FastLED.show();
