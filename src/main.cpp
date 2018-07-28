@@ -27,7 +27,12 @@ void rainbowWithGlitter();
 void addGlitter( fract8 chanceOfGlitter);
 void myconfetti(struct CRGB * pFirstLED);
 void confetti();
+void rainbowrain();
 
+uint8_t gHue = 0; // rotating "base color" used by many of the patterns
+
+//period between trail movement for rainbow_rain, milliseconds - for framerate locking
+unsigned long p = 14;
 
 void my_fill_rainbow( struct CRGB * pFirstLED, int numToFill,
                   uint8_t initialhue,
@@ -51,24 +56,69 @@ void my_fill_rainbow( struct CRGB * pFirstLED, int numToFill,
     }
 }
 
+class RainbowRain
+{
+    //class members ini at startup of class
+    unsigned long previous_millis = millis();
+    uint8_t rainpos = 0;
+
+    struct CRGB * pleds; 
+    uint8_t num_per_strip;
+
+    //constructor
+  public:
+    RainbowRain(struct CRGB * ipleds, uint8_t inum_per_strip) {
+      pleds=ipleds;
+      num_per_strip=inum_per_strip;
+    }
+
+    void rain() {
+      if (millis() - previous_millis >= p) {
+        rainpos++;
+        previous_millis = millis();
+        if (rainpos >= num_per_strip) {
+          rainpos = 0;
+        }
+      }
+
+      pleds[rainpos] += CHSV( gHue, 255, 192);
+    }
+
+};
+
+//Instantiate rainbow rain for each strip
+RainbowRain rain1(leds_1, NUM_LEDS_PER_STRIP);
+RainbowRain rain2(leds_2, NUM_LEDS_PER_STRIP);
+RainbowRain rain3(leds_3, NUM_LEDS_PER_STRIP);
+RainbowRain rain4(leds_4, NUM_LEDS_PER_STRIP);
+RainbowRain rain5(leds_5, NUM_LEDS_PER_STRIP);
+RainbowRain rain6(leds_6, NUM_LEDS_PER_STRIP);
+RainbowRain rain7(leds_7, NUM_LEDS_PER_STRIP);
+RainbowRain rain8(leds_8, NUM_LEDS_PER_STRIP);
+
+
 void setup() {
   delay(3000); // 3 second delay for recovery
 
   //FastLED.addLeds<APA102>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.addLeds<APA102>(leds, NUM_LEDS);
 
+
+
   // set master brightness control
   FastLED.setBrightness(BRIGHTNESS);
   pinMode(7, OUTPUT);
   digitalWrite(7, HIGH);  // enable access to LEDs
+
+
 }
 // List of patterns to cycle through.  Each is defined as a separate function below.
 typedef void (*SimplePatternList[])();
 //SimplePatternList gPatterns = { rainbow, confetti, sinelon, juggle, bpm };
-SimplePatternList gPatterns = { rainbow, confetti};
+SimplePatternList gPatterns = {rainbowrain};
 
 uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
-uint8_t gHue = 0; // rotating "base color" used by many of the patterns
+
 
 void loop()
 {
@@ -111,4 +161,17 @@ void confetti()
 int pos = random16(NUM_LEDS);
 leds[pos] += CHSV( gHue + random8(64), 200, 255);
 
+}
+
+void rainbowrain()
+{
+  fadeToBlackBy( leds, NUM_LEDS, 17);
+  rain1.rain();
+  rain2.rain();
+  rain3.rain();
+  rain4.rain();
+  rain5.rain();
+  rain6.rain();
+  rain7.rain();
+  rain8.rain();
 }
