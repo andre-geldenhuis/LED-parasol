@@ -60,7 +60,7 @@ class RainbowRain
 {
     //class members ini at startup of class
     unsigned long previous_millis = millis();
-    uint8_t rainpos = 0;
+    uint8_t rainpos;
 
     struct CRGB * pleds; 
     uint8_t num_per_strip;
@@ -72,18 +72,24 @@ class RainbowRain
       num_per_strip=inum_per_strip;
     }
 
-    void rain() {
+    void rain(bool dir=0) {
       if (millis() - previous_millis >= p) {
-        rainpos++;
         previous_millis = millis();
-        if (rainpos >= num_per_strip) {
-          rainpos = 0;
+        if (dir == 0){
+          rainpos++;
+          if (rainpos >= num_per_strip) {
+            rainpos = 0;
+          }
         }
+        else{
+          rainpos--;
+          if (rainpos >= num_per_strip) { //rainpos <= 0 # when rainpos goes -1 it wraps, not checking this lets us address the 0th led
+            rainpos = num_per_strip-1;
+          }
+        }
+      pleds[rainpos] += CHSV( gHue, 255, 192);  
       }
-
-      pleds[rainpos] += CHSV( gHue, 255, 192);
     }
-
 };
 
 //Instantiate rainbow rain for each strip
@@ -167,11 +173,11 @@ void rainbowrain()
 {
   fadeToBlackBy( leds, NUM_LEDS, 17);
   rain1.rain();
-  rain2.rain();
+  rain2.rain(1);
   rain3.rain();
-  rain4.rain();
+  rain4.rain(1);
   rain5.rain();
-  rain6.rain();
+  rain6.rain(1);
   rain7.rain();
-  rain8.rain();
+  rain8.rain(1);
 }
