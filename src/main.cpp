@@ -173,11 +173,11 @@ void rainbowrain()
 {
   fadeToBlackBy( leds, NUM_LEDS, 17);
   rain1.rain();
-  rain2.rain(1);
+  rain2.rain();
   rain3.rain();
-  rain4.rain(1);
+  rain4.rain();
   rain5.rain();
-  rain6.rain(1);
+  rain6.rain();
   rain7.rain();
-  rain8.rain(1);
+  rain8.rain();
 }
