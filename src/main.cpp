@@ -109,7 +109,8 @@ void setup() {
   delay(200); // 3 second delay for recovery
 
   //FastLED.addLeds<APA102>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
-  FastLED.addLeds<APA102>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+  FastLED.addLeds<APA102, 11, 13, BGR, DATA_RATE_MHZ(12)>(leds, NUM_LEDS);
+  
 
 
 
