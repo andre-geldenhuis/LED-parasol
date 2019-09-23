@@ -1,4 +1,12 @@
 #include "FastLED.h"
+#include <NXPMotionSense.h>
+
+NXPMotionSense imu;
+  float ax, ay, az;
+  float gx, gy, gz;
+  float mx, my, mz;
+  float roll;
+  float elapsedTime, currentTime, previousTime;
 
 FASTLED_USING_NAMESPACE
 
@@ -30,6 +38,7 @@ void confetti();
 void rainbowrain();
 
 uint8_t gHue = 0; // rotating "base color" used by many of the patterns
+uint8_t rollhue = 0;
 
 //period between trail movement for rainbow_rain, milliseconds - for framerate locking
 unsigned long p = 14;
@@ -107,9 +116,10 @@ RainbowRain rain8(leds_8, NUM_LEDS_PER_STRIP);
 
 void setup() {
   delay(200); // 3 second delay for recovery
+  imu.begin();
 
   //FastLED.addLeds<APA102>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
-  FastLED.addLeds<APA102>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+  FastLED.addLeds<APA102, 11, 13, BGR, DATA_RATE_MHZ(12)>(leds, NUM_LEDS);
 
 
 
@@ -118,6 +128,9 @@ void setup() {
   pinMode(7, OUTPUT);
   digitalWrite(7, HIGH);  // enable access to LEDs
 
+  //TODO remove!
+  pinMode(13, OUTPUT);
+  currentTime = millis();
 
 }
 // List of patterns to cycle through.  Each is defined as a separate function below.
@@ -130,7 +143,38 @@ uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
 
 void loop()
 {
-  if (spinning){}
+  if (spinning){
+    EVERY_N_MILLISECONDS(10) {  
+      if (imu.available()) {
+          imu.readMotionSensor(ax, ay, az, gx, gy, gz, mx, my, mz);
+          previousTime = currentTime;        // Previous time is stored before the actual time read
+          currentTime = millis();            // Current time actual time read
+          elapsedTime = (currentTime - previousTime) / 1000; // Divide by 1000 to get seconds
+          
+          //simple integrate
+          roll = roll + gx*elapsedTime;
+          if (roll>360){
+            roll = roll -360;
+          }
+          else if(roll<0){
+            roll = 360-roll;
+          }
+
+          rollhue = int(roll);
+          if (rollhue>255){
+            rollhue = 255;
+          }
+          leds_1 = CHSV( rollhue, 255, 192);
+          
+          FastLED.show();
+          // digitalWrite(13, HIGH);  // enable access to LEDs
+          
+          // Serial.print(gy);
+      }
+    } 
+    
+  }
+    
   else{
     // Call the current pattern function once, updating the 'leds' array
     gPatterns[gCurrentPatternNumber]();
