@@ -104,7 +104,7 @@ RainbowRain rain8(leds_8, NUM_LEDS_PER_STRIP);
 
 
 void setup() {
-  delay(3000); // 3 second delay for recovery
+  delay(200); // 3 second delay for recovery
 
   //FastLED.addLeds<APA102>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.addLeds<APA102>(leds, NUM_LEDS);
