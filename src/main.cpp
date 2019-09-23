@@ -34,6 +34,8 @@ uint8_t gHue = 0; // rotating "base color" used by many of the patterns
 //period between trail movement for rainbow_rain, milliseconds - for framerate locking
 unsigned long p = 14;
 
+bool spinning = false;
+
 void my_fill_rainbow( struct CRGB * pFirstLED, int numToFill,
                   uint8_t initialhue,
                   uint8_t deltahue,
@@ -107,7 +109,7 @@ void setup() {
   delay(200); // 3 second delay for recovery
 
   //FastLED.addLeds<APA102>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
-  FastLED.addLeds<APA102>(leds, NUM_LEDS);
+  FastLED.addLeds<APA102>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
 
 
 
@@ -121,24 +123,27 @@ void setup() {
 // List of patterns to cycle through.  Each is defined as a separate function below.
 typedef void (*SimplePatternList[])();
 //SimplePatternList gPatterns = { rainbow, confetti, sinelon, juggle, bpm };
-SimplePatternList gPatterns = {rainbowrain};
+SimplePatternList gPatterns = {rainbow};
 
 uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
 
 
 void loop()
 {
-  // Call the current pattern function once, updating the 'leds' array
-  gPatterns[gCurrentPatternNumber]();
+  if (spinning){}
+  else{
+    // Call the current pattern function once, updating the 'leds' array
+    gPatterns[gCurrentPatternNumber]();
 
-  // send the 'leds' array out to the actual LED strip
-  FastLED.show();
-  // insert a delay to keep the framerate modest
-  FastLED.delay(1000/FRAMES_PER_SECOND);
+    // send the 'leds' array out to the actual LED strip
+    FastLED.show();
+    // insert a delay to keep the framerate modest
+    FastLED.delay(1000/FRAMES_PER_SECOND);
 
-  // do some periodic updates
-  EVERY_N_MILLISECONDS( 1 ) { gHue = gHue+1; } // slowly cycle the "base color" through the rainbow
-  EVERY_N_SECONDS( 60 ) { nextPattern(); } // change patterns periodically
+    // do some periodic updates
+    EVERY_N_MILLISECONDS( 1) { gHue = gHue+1; } // slowly cycle the "base color" through the rainbow
+    EVERY_N_SECONDS( 60 ) { nextPattern(); } // change patterns periodically
+  }
 }
 
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
